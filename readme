@@ -1,0 +1,22 @@
+######################
+PROJET final Datascientest 
+Lurie, Marin, JB
+######################
+
+* Récupération données publiques
+* Rework des Data
+* Ecriture d'une BDD SQL
+* Réalisation d'un modèle de Datascience prédisant un prix dans une zone
+* Création d'un API accédant au modèle et proposant un prix de vente selon certains critères entrés.
+
+######################
+Source des données:
+https://cerema.app.box.com/v/dvfplus-opendata/folder/178410340835
+######################
+
+
+######################
+Machine virtuelle hébergeant la BDD et le modèle:
+ec2-user@ec2-44-204-92-180.compute-1.amazonaws.com
+######################
+
