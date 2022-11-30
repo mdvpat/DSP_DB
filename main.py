@@ -3,10 +3,24 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import List
 from pydantic import BaseModel
 import pandas as pd
+import random
+import fonctions as func
+import mysql.connector
+from mysql.connector import Error
 
-### Import MODEL
-
+### Import BD et creation de deux listes pour USE et SUBJECT
 ###
+###
+##database = pd.read_csv('temp.csv', sep=',')
+#use_dict = dict(zip(list(range(1, len(database['use'].unique()))), database['use'].unique().tolist()))
+#subject_dict = dict(zip(list(range(1, len(database['subject'].unique()))), database['subject'].unique().tolist()))
+
+our_host = "44.204.92.180"
+our_dbname = "Projet3_DStest_LMJB"
+our_user = 'root'
+our_password = "admin2022"
+auth_plugin = 'mysql_native_password'
+
 
 ### Déclaration objet API et nommage
 ###
@@ -21,12 +35,8 @@ api = FastAPI(
         'description': 'Home page'
       },
       {
-        'name': 'readme',
-        'description': 'Obtenir la liste des options disponibles pour requeter le modèle'
-      },
-      {
-        'name': 'prix_estim',
-        'description': 'Obtenir le questionnaire'
+        'name': 'param',
+        'description': 'Obtenir les paramêtres'
       },
       {
         'name': 'admin',
@@ -35,14 +45,11 @@ api = FastAPI(
     ]
 )
 
+#############################################################################################
 ### Authentification avec OAuth2
-###
-###
+#############################################################################################
 user_database = {
-    "Lurie": "Lurie",
-    "Marin": "Marin",
-    "Jb": "Jb",
-    "admin": "admin" 
+  "admin": "Ds2022+++",
   }
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -63,48 +70,41 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
   else :
     raise HTTPException(status_code=400, detail="Incorrect username or password")
 
+#############################################################################################
+### Création de la classe Parameter pour requeter la BDD et spécifier le corps de la requête
+#############################################################################################
+class Parameter(BaseModel):
+    """
+    Paramêtres du modèle
+    """
+    surface: int
+    nb_piece: int
+    typologie: str
+    commune: str
+    code_postal: str
+    adresse: str
+
+#############################################################################################
+### API
+#############################################################################################
 @api.get("/", name="Home page de l'API", tags=['home'])
 def home(token: str = Depends(oauth2_scheme)):
   return {"token": token}
 
-###Fonctions outils
-###
-###
-
-### Création de la classe QUESTION pour requeter la BDD et spécifier le corps de la requête
-###
-###
-class Request(BaseModel):
-    """
-    Le choix permet d'entrer un "Use" et une liste de "subject"
-    """
-    critere1: List[str]
-    critere2: List[str]
-    critere3: str
-
-### Fonction renvoyant la liste des use
-###
-###
-@api.get('/readme', name = "", tags=['readme'])
-async def get_info(token: str = Depends(oauth2_scheme)):
+@api.post('/param', name = "Obtenir les paramêtres'", tags=['param'])
+async def post_param(param: Parameter, token: str = Depends(oauth2_scheme)):
   """ 
-  Obtenir le manuel de l'API
+  Obtention des paramêtres depuis formulaire app
   """
-  return {}
+  param = {'adresse': param.adresse,'commune': param.commune, 'code_postal': param.code_postal, 'surface': param.surface, 'nb_piece': param.nb_piece, 'typologie':param.typologie}
+  df_bdd_return =  func.requesting_bdd(param.adresse, param.commune, param.code_postal, param.surface, param.nb_piece, param.typologie)
+  df_bdd = df_bdd_return.to_json(orient = 'records')
+  my_dic = func.model_passing(df_bdd_return)
+  return df_bdd, my_dic
 
-### Fonction renvoyant la liste des subject
-###
-###
-@api.get('/prix_estim', name = "Obtenir l'estimation d'un prix et le sigma", tags=['prix_estim'])
-async def get_prix_estim(token: str = Depends(oauth2_scheme)):
-    """ 
-    Obtenir l'estimation d'un prix et les sigma'
-    """
-    return {} 
-
+#############################################################################################
 ###Adding New User
-###
-###
+#############################################################################################
 class NewUser(BaseModel):
   username: str
   password: str
@@ -121,5 +121,3 @@ async def add_user(new_user: NewUser, token: str = Depends(oauth2_scheme)):
     return "User ajouté avec succès", user_database
   else :
     raise HTTPException(status_code=400, detail="Vous n'avez pas les droits pour effectuer cette opération.")
-
-

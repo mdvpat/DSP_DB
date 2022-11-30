@@ -1,12 +1,11 @@
 import os
 import pandas as pd
 import mysql.connector
-
-our_host = ""
-our_username = ""
-our_password = ""
+from mysql.connector import Error
 
 def pull_data():
+    '''Fonction qui recupère les données d'après la bdd.
+    Parcours chaque fichier pour absorber le csv du département'''
     rootdir = './bdd'
     path_list = []
     data= []
@@ -21,7 +20,6 @@ def pull_data():
 
     df = pd.concat(data)
 
-    #df.to_csv('temp.csv')
 
     df['Date mutation'] = pd.to_datetime(df['Date mutation'], dayfirst=True)
     df['annee'] = df['Date mutation'].dt.year
@@ -68,56 +66,113 @@ def pull_data():
 
     return df
 
-def create_db():
-    mydb = mysql.connector.connect(
-        host = our_host,
-        user = our_username,
-        password = our_password
-        )
+def create_db(our_host, our_dbname, our_user, our_password, auth_plugin):
+    connection = mysql.connector.connect(host=our_host,
+                                    database=our_dbname,
+                                    user=our_user,
+                                    password=our_password, 
+                                    auth_plugin=auth_plugin)
+    db_Info = connection.get_server_info()
+    print("Connecté à Mysql: ", db_Info)
+    cursor = connection.cursor()
+    cursor.execute("CREATE DATABASE projet3_DStest_LMJB")
+    print("DATABASE CREATION SUCCESS")
 
-    mycursor = mydb.cursor()
-
-    mycursor.execute("CREATE DATABASE projet3_DStest_LMJB")
-    print("Successful")
-
-def show_existing_db():
-    mydb = mysql.connector.connect(
-        host = our_host,
-        user = our_username,
-        password = our_password
-    )
-
-    mycursor = mydb.cursor()
-    mycursor.execute("SHOW DATABASES")
-
+def show_existing_db(our_host, our_dbname, our_user, our_password, auth_plugin):
+    connection = mysql.connector.connect(host=our_host,
+                                    database=our_dbname,
+                                    user=our_user,
+                                    password=our_password, 
+                                    auth_plugin=auth_plugin)
+    db_Info = connection.get_server_info()
+    print("Connecté à Mysql: ", db_Info)
+    cursor = connection.cursor()
+    cursor.execute("SHOW DATABASES")
     db_list = []
-    for db in mycursor:
+    for db in cursor:
         db_list.append(db)
+    cursor.close()
     return print(db_list)
 
-def access_db_cursor():
-    mydb = mysql.connector.connect(
-        host = our_host,
-        user = our_username,
-        password = our_password,
-        database = "projet3_DStest_LMJB"
-    )
-    return mydb.cursor()
+def show_tables(our_host, our_dbname, our_user, our_password, auth_plugin):
+    connection = mysql.connector.connect(host=our_host,
+                                    database=our_dbname,
+                                    user=our_user,
+                                    password=our_password, 
+                                    auth_plugin=auth_plugin)
+    db_Info = connection.get_server_info()
+    print("Connecté à Mysql: ", db_Info)
+    cursor = connection.cursor()
+    cursor.execute("SHOW TABLES")
+    table_list = []
+    for db in cursor:
+        table_list.append(db)
+    cursor.close()
+    return print(table_list)
 
-def create_table():
-    my_db_cursor = access_db_cursor()
-    #df = pull_data()
-    #my_float_col = df.select_dtypes('float').column.to_list()
-    #my_int_col = df.select_dtypes('int').column.to_list()
-    #my_str_col = df.select_dtypes('object').column.to_list()
-    my_db_cursor.execute("CREATE TABLE dataframe (Date_mutation DATETIME, Nature_mutation VARCHAR(255), Valeur_fonciere DECIMAL(15,2), Type_de_voie VARCHAR(255), Code_departement VARCHAR(255), Surface_reelle_bati DECIMAL(15,2), Type_local VARCHAR(255), Nombre_pieces_principales INT, Surface_terrain DECIMAL(15, 2), Nombre_de_lots INT, Section VARCHAR(255), No_plan INT, Adresse VARCHAR(255))")
+def create_table(tablename, our_host, our_dbname, our_user, our_password, auth_plugin):
+    connection = mysql.connector.connect(host=our_host,
+                                    database=our_dbname,
+                                    user=our_user,
+                                    password=our_password, 
+                                    auth_plugin=auth_plugin)
+    db_Info = connection.get_server_info()
+    print("Connecté à Mysql: ", db_Info)
+    cursor = connection.cursor()
+    cursor.execute(f'''DROP TABLE IF EXISTS {tablename}''')
+    sql =f'''CREATE TABLE {tablename}(Date_mutation DATETIME, Nature_mutation VARCHAR(255), Valeur_fonciere DECIMAL(15,2), Type_de_voie VARCHAR(255), Code_departement VARCHAR(255), Surface_reelle_bati DECIMAL(15,2), Type_local VARCHAR(255), Nombre_pieces_principales INT, Surface_terrain DECIMAL(15, 2), Nombre_de_lots INT, Section VARCHAR(255), No_plan INT, Adresse VARCHAR(255), Commune VARCHAR(255), Code_postal VARCHAR(255))'''
+    cursor.execute(sql)
+    cursor.close()
 
-def insert_data():
-    my_db_cursor = access_db_cursor()
-    df = pull_data()
-    sql = "INSERT INTO dataframe (Date_mutation, Nature_mutation, Valeur_fonciere, Type_de_voie, Code_departement, Surface_reelle_bati, Type_local, Nombre_pieces_principales, Surface_terrain, Nombre_de_lots, Section, No_plan, Adresse) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+def insert_data(tablename, our_host, our_dbname, our_user, our_password, auth_plugin):
+    connection = mysql.connector.connect(host=our_host,
+                                    database=our_dbname,
+                                    user=our_user,
+                                    password=our_password, 
+                                    auth_plugin=auth_plugin)
+    db_Info = connection.get_server_info()
+    print("Connecté à Mysql: ", db_Info)
+    cursor = connection.cursor()
+    df = pd.read_csv("./flat_file_dataframe.csv")
+    sql = f'''INSERT INTO {tablename} (Date_mutation, Nature_mutation, Valeur_fonciere, Code_departement, Surface_reelle_bati, Type_local, Nombre_pieces_principales, Surface_terrain, Nombre_de_lots, Section, No_plan, Adresse, Commune, Code_postal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+    counter=0
     for index, row in df.iterrows():
-        my_db_cursor.execute("INSERT INTO dataframe (Date_mutation, Nature_mutation, Valeur_fonciere, Type_de_voie, Code_departement, Surface_reelle_bati, Type_local, Nombre_pieces_principales, Surface_terrain, Nombre_de_lots, Section, No_plan, Adresse) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", row.Date_mutation, row.Nature_mutation, row.Valeur_fonciere, row.Type_de_voie, row.Code_departement, row.Surface_reelle_bati, row.Type_local, row.Nombre_pieces_principales, row.Surface_terrain, row.Nombre_de_lots, row.Section, row.No_plan, row.Adresse)
-    my_db_cursor.commit()
-    print(my_db_cursor.rowcount, "lignes inserées.")
-    my_db_cursor.close() 
+        cursor.execute(sql, (row.Date_mutation, row.Nature_mutation, row.Valeur_fonciere, row.Code_departement, row.Surface_reelle_bati, row.Type_local, row.Nombre_pieces_principales, row.Surface_terrain, row.Nombre_de_lots, row.Section, row.No_plan, row.Adresse, row.Commune, row.Code_postal))
+        counter+=1
+        print(counter)
+    cursor.commit()
+    print(cursor.rowcount, "lignes inserées.")
+    cursor.close() 
+
+def requesting_bdd(adresse, commune, code_postal, surface, nb_piece, typologie, our_host, our_dbname, our_user, our_password, auth_plugin):
+    try:
+        connection = mysql.connector.connect(host=our_host,
+                                    database=our_dbname,
+                                    user=our_user,
+                                    password=our_password, 
+                                    auth_plugin=auth_plugin)
+        if connection.is_connected():
+            db_Info = connection.get_server_info()
+            print("Connected to MySQL Server version ", db_Info)
+            cursor = connection.cursor()
+            cursor.execute(f"select * from dataframe where Adresse = {adresse} and commune = {commune} and code_postal = {code_postal} and Surface_reelle_bati = {surface} and Nombre_pieces_principales = {nb_piece} and Type_local = {typologie};")
+            record = cursor.fetchall()
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed")
+
+            df = pd.DataFrame(record, columns = ["date_mutation", "nature_mutation","Valeur_fonciere", "code_departement", "surface", "typologie", "nb_piece", "surface_terrain","nb_lots", "section", "noplan", "adresse", "commune", "code_postal"])
+            df['valeur'] = df['valeur'].astype(float)
+            df['nb_piece'] = df['nb_piece'].astype(int)
+            df['surface'] = df['surface'].astype(int)
+            df = df.loc[(df['adresse'] == adresse) & (df['surface'] == surface) & (df['nb_piece'] == nb_piece) & (df['typologie'] == typologie) & (df['commune'] == commune) & (df['code_postal'] == code_postal)]
+            return df
+
+    except Error as e:
+        print("Error while connecting to MySQL", e)
+
+def model_passing(df):
+    sigma = 1
+    price_estim = 1
+    my_dic = {price_estim : price_estim, sigma : sigma}
+    return my_dic
