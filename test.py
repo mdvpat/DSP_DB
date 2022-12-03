@@ -19,26 +19,10 @@ connection = mysql.connector.connect(host=our_host,
 
 
 commune = "BOURG-EN-BRESSE"
-surface = int(100)
+surface = 100
 typologie = "Maison"
 
 df_bdd_return =  func.requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
-df_bdd = df_bdd_return.to_dict('index')
 result = func.model_passing(df_bdd_return, surface)
+df_bdd = df_bdd_return.to_dict('index')
 print(result)
-
-'''
-
-db_Info = connection.get_server_info()
-print("Connected to MySQL Server version ", db_Info)
-cursor = connection.cursor()
-sql = "select * from DATASET where commune = '%s' and Surface_reelle_bati = %s and Nombre_pieces_principales = %s and Type_local = '%s'"%(commune, surface, nb_piece, typologie)
-cursor.execute(sql)
-#, code_postal, surface, nb_piece, typologie))
-record = cursor.fetchall()
-print(record)
-cursor.close()
-connection.close()
-print("MySQL connection is closed")
-'''
-
