@@ -90,10 +90,10 @@ async def post_param(param: Parameter): #token: str = Depends(oauth2_scheme)
   """ 
   Obtention des paramêtres depuis formulaire app
   """
-  #df_bdd_return =  func.requesting_bdd(param.commune, param.typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
-  #df_bdd = df_bdd_return.to_dict('index')
-  #result = func.model_passing(df_bdd_return, param.surface)
-  return {"test": {}, "test2": {}}
+  df_bdd_return =  func.requesting_bdd(param.commune, param.typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
+  df_bdd = df_bdd_return.to_dict('index')
+  result = func.model_passing(df_bdd_return, param.surface)
+  return result
   return {"transactions": df_bdd, "result": result}
 
 #############################################################################################
