@@ -8,9 +8,6 @@ import fonctions as func
 import mysql.connector
 from mysql.connector import Error
 
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-
 ### Import BD et creation de deux listes pour USE et SUBJECT
 ###
 ###
@@ -93,7 +90,7 @@ async def post_param(param: Parameter): #token: str = Depends(oauth2_scheme)
   """ 
   Obtention des paramêtres depuis formulaire app
   """
-  param = {'commune': param.commune, 'surface': param.surface, 'nb_piece': param.nb_piece, 'typologie':param.typologie}
+  #param = {'commune': param.commune, 'surface': param.surface, 'nb_piece': param.nb_piece, 'typologie': param.typologie}
   #df_bdd_return =  func.requesting_bdd(param.commune, param.surface, param.nb_piece, param.typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
   #df_bdd = df_bdd_return.to_json(orient = 'records')
   #my_dic = func.model_passing(df_bdd_return)
