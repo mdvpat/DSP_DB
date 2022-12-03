@@ -144,7 +144,7 @@ def insert_data(tablename, our_host, our_dbname, our_user, our_password, auth_pl
     print(cursor.rowcount, "lignes inserées.")
     cursor.close() 
 
-def requesting_bdd(commune, surface, nb_piece, typologie, our_host, our_dbname, our_user, our_password, auth_plugin):
+def requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_password, auth_plugin):
     try:
         connection = mysql.connector.connect(host=our_host,
                                     database=our_dbname,
