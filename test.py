@@ -18,14 +18,13 @@ connection = mysql.connector.connect(host=our_host,
                                     auth_plugin=auth_plugin)
 
 
-commune = "BOURG-EN-BRESSE"
+commune = "AVIGNON"
 surface = 100
-#nb_piece = 4
 typologie = "Maison"
 
 df = func.requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
 dic = func.model_passing(df, surface)
-print(dic)
+print({"my_df": df.to_dict("index"), "my_dic":dic})
 
 '''
 
