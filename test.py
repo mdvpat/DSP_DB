@@ -18,7 +18,7 @@ connection = mysql.connector.connect(host=our_host,
                                     auth_plugin=auth_plugin)
 
 
-commune = "AVIGNON"
+commune = "BOURG-EN-BRESSE"
 surface = 100
 typologie = "Maison"
 
