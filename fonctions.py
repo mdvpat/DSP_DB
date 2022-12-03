@@ -225,6 +225,7 @@ def model_passing(df_bdd_return, surface_requete):
     linmodel=np.poly1d(np.polyfit(df_bdd_return["Surface_reelle_bati"], df_bdd_return["Valeur_fonciere"]/df_bdd_return["Surface_reelle_bati"], i))
     print("model fit ok ", i)
     sigma.append(r2_score(df_bdd_return["Valeur_fonciere"]/df_bdd_return["Surface_reelle_bati"], linmodel(df_bdd_return["Surface_reelle_bati"])))
+    surface_requete = int(surface_requete)
     price.append(linmodel(surface_requete)*surface_requete)
 
   #np.argmax(sigma)

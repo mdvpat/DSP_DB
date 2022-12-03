@@ -74,7 +74,6 @@ class Parameter(BaseModel):
     Paramêtres du modèle
     """
     surface: int
-    #nb_piece: int
     typologie: str
     commune: str
 
@@ -90,12 +89,11 @@ async def post_param(param: Parameter): #token: str = Depends(oauth2_scheme)
   """ 
   Obtention des paramêtres depuis formulaire app
   """
+  surface = int(param.surface)
   df_bdd_return =  func.requesting_bdd(param.commune, param.typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
-  a = param.surface
-  #result = func.model_passing(df_bdd_return, param.surface)
-  #df_bdd = df_bdd_return.to_dict('index')
-  return {'test': a}
-  #return {"transactions": df_bdd, "result": result}
+  result = func.model_passing(df_bdd_return, surface)
+  df_bdd = df_bdd_return.to_dict('index')
+  return {"transactions": df_bdd, "result": result}
 
 #############################################################################################
 ###Adding New User
