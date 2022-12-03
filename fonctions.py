@@ -159,10 +159,10 @@ def requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_passw
             cursor.close()
             connection.close()
 
-            df = pd.DataFrame(record, columns = ["date_mutation", "nature_mutation","Valeur_fonciere", "code_departement", "surface", "typologie", "nb_piece", "surface_terrain","nb_lots", "section", "noplan", "adresse", "commune", "code_postal"])
+            df = pd.DataFrame(record, columns = ["Date_mutation", "nature_mutation","Valeur_fonciere", "code_departement", "Surface_reelle_bati", "typologie", "nb_piece", "surface_terrain","nb_lots", "section", "noplan", "adresse", "commune", "code_postal"])
             df['Valeur_fonciere'] = df['Valeur_fonciere'].astype(float)
             df['nb_piece'] = df['nb_piece'].astype(int)
-            df['surface'] = df['surface'].astype(int)
+            df['Surface_reelle_bati'] = df['Surface_reelle_bati'].astype(int)
             df = df.loc[(df['typologie'] == typologie) & (df['commune'] == commune)]
             return df
 
@@ -228,4 +228,4 @@ def model_passing(df_bdd_return, surface_requete):
     price.append(linmodel(surface_requete)*surface_requete)
 
   #np.argmax(sigma)
-  return {"price_estim":price[np.argmax(sigma)],"sigma":max(sigma)}
+  return {"price_estim":round(price[np.argmax(sigma)],0),"sigma":round(max(sigma),2)}

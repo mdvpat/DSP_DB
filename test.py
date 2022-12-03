@@ -1,4 +1,5 @@
 import pandas as pd
+import pandas as pd
 import mysql.connector
 from mysql.connector import Error
 import fonctions as func
@@ -23,7 +24,8 @@ surface = 100
 typologie = "Maison"
 
 df = func.requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
-print(df)
+dic = func.model_passing(df, surface)
+print(dic)
 
 '''
 
