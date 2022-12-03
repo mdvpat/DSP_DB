@@ -20,7 +20,7 @@ connection = mysql.connector.connect(host=our_host,
 commune = "BOURG-EN-BRESSE"
 surface = 100
 nb_piece = 4
-typologie = 'Maison'
+typologie = "Maison"
 
 df = func.requesting_bdd(commune, surface, nb_piece, typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
 print(df)
