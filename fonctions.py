@@ -144,7 +144,7 @@ def insert_data(tablename, our_host, our_dbname, our_user, our_password, auth_pl
     print(cursor.rowcount, "lignes inserées.")
     cursor.close() 
 
-def requesting_bdd(adresse, commune, code_postal, surface, nb_piece, typologie, our_host, our_dbname, our_user, our_password, auth_plugin):
+def requesting_bdd(commune, code_postal, surface, nb_piece, typologie, our_host, our_dbname, our_user, our_password, auth_plugin):
     try:
         connection = mysql.connector.connect(host=our_host,
                                     database=our_dbname,
@@ -155,7 +155,7 @@ def requesting_bdd(adresse, commune, code_postal, surface, nb_piece, typologie, 
             db_Info = connection.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
             cursor = connection.cursor()
-            cursor.execute(f"select * from dataframe where Adresse = {adresse} and commune = {commune} and code_postal = {code_postal} and Surface_reelle_bati = {surface} and Nombre_pieces_principales = {nb_piece} and Type_local = {typologie};")
+            cursor.execute(f"select * from dataframe where commune = {commune} and code_postal = {code_postal} and Surface_reelle_bati = {surface} and Nombre_pieces_principales = {nb_piece} and Type_local = {typologie};")
             record = cursor.fetchall()
             cursor.close()
             connection.close()
@@ -165,7 +165,7 @@ def requesting_bdd(adresse, commune, code_postal, surface, nb_piece, typologie, 
             df['valeur'] = df['valeur'].astype(float)
             df['nb_piece'] = df['nb_piece'].astype(int)
             df['surface'] = df['surface'].astype(int)
-            df = df.loc[(df['adresse'] == adresse) & (df['surface'] == surface) & (df['nb_piece'] == nb_piece) & (df['typologie'] == typologie) & (df['commune'] == commune) & (df['code_postal'] == code_postal)]
+            df = df.loc[(df['surface'] == surface) & (df['nb_piece'] == nb_piece) & (df['typologie'] == typologie) & (df['commune'] == commune) & (df['code_postal'] == code_postal)]
             return df
 
     except Error as e:

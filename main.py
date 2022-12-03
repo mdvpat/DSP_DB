@@ -11,10 +11,6 @@ from mysql.connector import Error
 ### Import BD et creation de deux listes pour USE et SUBJECT
 ###
 ###
-##database = pd.read_csv('temp.csv', sep=',')
-#use_dict = dict(zip(list(range(1, len(database['use'].unique()))), database['use'].unique().tolist()))
-#subject_dict = dict(zip(list(range(1, len(database['subject'].unique()))), database['subject'].unique().tolist()))
-
 our_host = "44.204.92.180"
 our_dbname = "Projet3_DStest_LMJB"
 our_user = 'root'
@@ -88,16 +84,16 @@ class Parameter(BaseModel):
 ### API
 #############################################################################################
 @api.get("/", name="Home page de l'API", tags=['home'])
-def home(token: str = Depends(oauth2_scheme)):
-  return {"token": token}
+def home(): #token: str = Depends(oauth2_scheme)
+  return {} #{"token": token}
 
 @api.post('/param', name = "Obtenir les paramêtres'", tags=['param'])
-async def post_param(param: Parameter, token: str = Depends(oauth2_scheme)):
+async def post_param(param: Parameter) #token: str = Depends(oauth2_scheme)
   """ 
   Obtention des paramêtres depuis formulaire app
   """
-  param = {'adresse': param.adresse,'commune': param.commune, 'code_postal': param.code_postal, 'surface': param.surface, 'nb_piece': param.nb_piece, 'typologie':param.typologie}
-  df_bdd_return =  func.requesting_bdd(param.adresse, param.commune, param.code_postal, param.surface, param.nb_piece, param.typologie)
+  param = {'commune': param.commune, 'code_postal': param.code_postal, 'surface': param.surface, 'nb_piece': param.nb_piece, 'typologie':param.typologie}
+  df_bdd_return =  func.requesting_bdd(param.commune, param.code_postal, param.surface, param.nb_piece, param.typologie)
   df_bdd = df_bdd_return.to_json(orient = 'records')
   my_dic = func.model_passing(df_bdd_return)
   return df_bdd, my_dic
