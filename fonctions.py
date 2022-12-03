@@ -163,7 +163,7 @@ def requesting_bdd(commune, surface, nb_piece, typologie, our_host, our_dbname, 
             print("MySQL connection is closed")
 
             df = pd.DataFrame(record, columns = ["date_mutation", "nature_mutation","Valeur_fonciere", "code_departement", "surface", "typologie", "nb_piece", "surface_terrain","nb_lots", "section", "noplan", "adresse", "commune", "code_postal"])
-            df['valeur'] = df['valeur'].astype(float)
+            df['Valeur_fonciere'] = df['Valeur_fonciere'].astype(float)
             df['nb_piece'] = df['nb_piece'].astype(int)
             df['surface'] = df['surface'].astype(int)
             df = df.loc[(df['surface'] == surface) & (df['nb_piece'] == nb_piece) & (df['typologie'] == typologie) & (df['commune'] == commune)]
