@@ -88,7 +88,7 @@ def home(): #token: str = Depends(oauth2_scheme)
   return {} #{"token": token}
 
 @api.post('/param', name = "Obtenir les paramêtres'", tags=['param'])
-async def post_param(param: Parameter) #token: str = Depends(oauth2_scheme)
+async def post_param(param: Parameter): #token: str = Depends(oauth2_scheme)
   """ 
   Obtention des paramêtres depuis formulaire app
   """
