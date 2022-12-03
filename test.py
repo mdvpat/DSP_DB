@@ -22,9 +22,10 @@ commune = "AVIGNON"
 surface = 100
 typologie = "Maison"
 
-df = func.requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
-dic = func.model_passing(df, surface)
-print({"my_df": df.to_dict("index"), "my_dic":dic})
+df_bdd_return =  func.requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
+df_bdd = df_bdd_return.to_dict('index')
+result = func.model_passing(df_bdd_return, surface)
+print({"transactions": df_bdd, "result": result})
 
 '''
 
