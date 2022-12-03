@@ -19,13 +19,13 @@ connection = mysql.connector.connect(host=our_host,
 
 
 commune = "BOURG-EN-BRESSE"
-surface = 100
+surface = int(100)
 typologie = "Maison"
 
 df_bdd_return =  func.requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
 df_bdd = df_bdd_return.to_dict('index')
 result = func.model_passing(df_bdd_return, surface)
-print({"transactions": df_bdd, "result": result})
+print(result)
 
 '''
 
