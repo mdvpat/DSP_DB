@@ -163,7 +163,7 @@ def requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_passw
             df['Valeur_fonciere'] = df['Valeur_fonciere'].astype(float)
             df['nb_piece'] = df['nb_piece'].astype(int)
             df['surface'] = df['surface'].astype(int)
-            df = df.loc['''(df['surface'] == surface) & (df['nb_piece'] == nb_piece) & '''(df['typologie'] == typologie) & (df['commune'] == commune)]
+            df = df.loc[(df['typologie'] == typologie) & (df['commune'] == commune)]
             return df
 
     except Error as e:
