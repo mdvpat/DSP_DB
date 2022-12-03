@@ -95,12 +95,10 @@ async def post_param(param: Parameter): #token: str = Depends(oauth2_scheme)
   Obtention des paramêtres depuis formulaire app
   """
   param = {'commune': param.commune, 'code_postal': param.code_postal, 'surface': param.surface+50, 'nb_piece': param.nb_piece, 'typologie':param.typologie}
-  '''
   df_bdd_return =  func.requesting_bdd(param.commune, param.code_postal, param.surface, param.nb_piece, param.typologie)
   df_bdd = df_bdd_return.to_json(orient = 'records')
   my_dic = func.model_passing(df_bdd_return)
-  '''
-  return param
+  return df_bdd
 
   #return df_bdd, my_dic
 
