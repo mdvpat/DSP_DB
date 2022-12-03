@@ -152,28 +152,80 @@ def requesting_bdd(commune, surface, nb_piece, typologie, our_host, our_dbname, 
                                     password=our_password, 
                                     auth_plugin=auth_plugin)
         if connection.is_connected():
-            db_Info = connection.get_server_info()
-            print("Connected to MySQL Server version ", db_Info)
             cursor = connection.cursor()
-            sql = "select * from DATASET where commune = '%s' and Surface_reelle_bati = %s and Nombre_pieces_principales = %s and Type_local = '%s'"%(commune, surface, nb_piece, typologie)
+            sql = "select * from DATASET where commune = '%s' and Type_local = '%s'"%(commune, typologie) #and Surface_reelle_bati = %s and Nombre_pieces_principales = %s 
             cursor.execute(sql)
             record = cursor.fetchall()
             cursor.close()
             connection.close()
-            print("MySQL connection is closed")
 
             df = pd.DataFrame(record, columns = ["date_mutation", "nature_mutation","Valeur_fonciere", "code_departement", "surface", "typologie", "nb_piece", "surface_terrain","nb_lots", "section", "noplan", "adresse", "commune", "code_postal"])
             df['Valeur_fonciere'] = df['Valeur_fonciere'].astype(float)
             df['nb_piece'] = df['nb_piece'].astype(int)
             df['surface'] = df['surface'].astype(int)
-            df = df.loc[(df['surface'] == surface) & (df['nb_piece'] == nb_piece) & (df['typologie'] == typologie) & (df['commune'] == commune)]
+            df = df.loc['''(df['surface'] == surface) & (df['nb_piece'] == nb_piece) & '''(df['typologie'] == typologie) & (df['commune'] == commune)]
             return df
 
     except Error as e:
         print("Error while connecting to MySQL", e)
 
-def model_passing(df):
-    sigma = 1
-    price_estim = 1
-    my_dic = {price_estim : price_estim, sigma : sigma}
-    return my_dic
+def model_passing(df_bdd_return, surface_requete):
+
+    # Import pandas et np
+  import pandas as pd
+  import numpy as np
+
+  # vérification de la df en input (shape)
+
+  if (min(df_bdd_return.shape) < 2) :
+    #raise ValueError('Nombre de transactions insuffisant... ')
+    price_estim,sigma=0,0
+  else:
+    price_estim,sigma=1,0
+    print("Model working...")
+
+  # Visuels
+  #import matplotlib as mpl
+  #import matplotlib.pyplot as plt
+  #import seaborn as sns
+
+  # Stats
+  #import statsmodels.formula.api as smf
+  #import statsmodels.api as sm
+  from sklearn.metrics import r2_score
+
+  # Modèle
+  #from sklearn.model_selection import train_test_split
+  #from sklearn.preprocessing import PolynomialFeatures
+  # Finalement np poly3 
+  # A rajouter des params dans la prochaine version
+
+  # Processing
+  #Division par zéro check et drop des surfaces égales à zéro
+  print("Processing...")
+
+  df_bdd_return = df_bdd_return[df_bdd_return.Surface_reelle_bati>0]
+  # index par date
+  print("Indexing Dataframe...")
+
+  df_bdd_return["Date_mutation"] = pd.to_datetime(df_bdd_return["Date_mutation"])
+  df_bdd_return=df_bdd_return.set_index('Date_mutation')
+
+  # sort par date
+  df_bdd_return = df_bdd_return.sort_index()
+
+  #def 
+  price=[]
+  sigma=[]
+
+  # Fit des polynomes de degré 1 à 3 et  calcul du prix et des métriques
+
+  for i in range(1,4):
+    print("polynome de degré ", i)
+    linmodel=np.poly1d(np.polyfit(df_bdd_return["Surface_reelle_bati"], df_bdd_return["Valeur_fonciere"]/df_bdd_return["Surface_reelle_bati"], i))
+    print("model fit ok ", i)
+    sigma.append(r2_score(df_bdd_return["Valeur_fonciere"]/df_bdd_return["Surface_reelle_bati"], linmodel(df_bdd_return["Surface_reelle_bati"])))
+    price.append(linmodel(surface_requete)*surface_requete)
+
+  #np.argmax(sigma)
+  return {"price_estim":price[np.argmax(sigma)],"sigma":max(sigma)}
