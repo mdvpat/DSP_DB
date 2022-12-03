@@ -25,4 +25,4 @@ typologie = "Maison"
 df_bdd_return =  func.requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
 result = func.model_passing(df_bdd_return, surface)
 df_bdd = df_bdd_return.to_dict('index')
-print(result)
+print(df_bdd_return)

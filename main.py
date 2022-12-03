@@ -89,7 +89,8 @@ async def post_param(param: Parameter): #token: str = Depends(oauth2_scheme)
   """ 
   Obtention des paramêtres depuis formulaire app
   """
-  surface = int(param.surface)
+  #surface = int(param.surface)
+  surface = 100
   df_bdd_return =  func.requesting_bdd(param.commune, param.typologie, our_host, our_dbname, our_user, our_password, auth_plugin)
   result = func.model_passing(df_bdd_return, surface)
   df_bdd = df_bdd_return.to_dict('index')
