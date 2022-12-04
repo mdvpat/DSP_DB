@@ -24,7 +24,7 @@ auth_plugin = 'mysql_native_password'
 ###
 api = FastAPI(
     title='Datascientest Projet 3 Lurie, Marin, JB',
-    description="API projet final Data-engineer Datascientest Lurie, Marin, JB",
+    description="API projet final Data-engineer Datascientest Iurie, Marin, JB",
     version="1.0.1",
     openapi_tags=[
       {
