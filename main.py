@@ -14,7 +14,7 @@ from mysql.connector import Error
 our_host = "44.204.92.180"
 our_dbname = "Projet3_DStest_LMJB"
 our_user = 'root'
-our_password = "admin2022"
+our_password = os.environ.get('MYSQL_ROOT_PASSWORD')
 auth_plugin = 'mysql_native_password'
 
 
