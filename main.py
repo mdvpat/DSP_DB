@@ -4,6 +4,7 @@ from typing import List
 from pydantic import BaseModel
 import pandas as pd
 import random
+import os
 import fonctions as func
 import mysql.connector
 from mysql.connector import Error
@@ -14,7 +15,7 @@ from mysql.connector import Error
 our_host = "44.204.92.180"
 our_dbname = "Projet3_DStest_LMJB"
 our_user = 'root'
-our_password = "admin2022"
+our_password = os.getenv('MYSQL_ROOT_PASSWORD')
 auth_plugin = 'mysql_native_password'
 
 
