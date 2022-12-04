@@ -7,4 +7,4 @@ RUN apt install libmysqlclient-dev -y
 RUN apt install uvicorn -y
 RUN pip3 install fastapi pandas pydantic mysql mysql-connector-python python-multipart httptools==0.1.* uvloop
 WORKDIR /root/api
-CMD ["uvicorn", "main:api", "--host", "0.0.0.0"]
+CMD ["/entrypoint.sh"]
