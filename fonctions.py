@@ -163,7 +163,8 @@ def requesting_bdd(commune, typologie, our_host, our_dbname, our_user, our_passw
             df['Valeur_fonciere'] = df['Valeur_fonciere'].astype(float)
             df['nb_piece'] = df['nb_piece'].astype(int)
             df['Surface_reelle_bati'] = df['Surface_reelle_bati'].astype(int)
-            df = df.loc[(df['typologie'] == typologie) & (df['commune'] == commune)]
+            df['Date_mutation']= pd.to_datetime(df['Date_mutation'])
+            df = df.loc[(df['typologie'] == typologie) & (df['commune'] == commune) & (df['Date_mutation'].dt.year == 2022)]
             return df
 
     except Error as e:
