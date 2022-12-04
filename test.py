@@ -26,3 +26,12 @@ df_bdd_return =  func.requesting_bdd(commune, typologie, our_host, our_dbname, o
 result = func.model_passing(df_bdd_return, surface)
 df_bdd = df_bdd_return.to_dict('index')
 print({"transactions": df_bdd, "result": result})
+
+'''
+{
+  "surface": 100,
+  "typologie": "Maison",
+  "commune": "AVIGNON"
+}
+
+'''
