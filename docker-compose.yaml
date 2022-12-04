@@ -1,7 +1,7 @@
 version: "3.5"
 services:
   api:
-    image: api:0.0.3
+    image: api:0.0.4
     ports:
       - "8000:8000"
     secrets:
